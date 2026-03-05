@@ -1,0 +1,20 @@
+# Build output
+build/
+
+# IDE / Editor
+.vs/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# Compiled shaders (regenerated from HLSL)
+*.spv
+
+# OS files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Assets (large PLY files)
+assets/*.ply
