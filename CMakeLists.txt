@@ -72,7 +72,6 @@ endfunction()
 compile_hlsl(${SHADER_SRC_DIR}/triangle.vert.hlsl vs_6_0 triangle.vert.spv)
 compile_hlsl(${SHADER_SRC_DIR}/triangle.frag.hlsl ps_6_0 triangle.frag.spv)
 compile_hlsl(${SHADER_SRC_DIR}/points.vert.hlsl   vs_6_0 points.vert.spv)
-compile_hlsl(${SHADER_SRC_DIR}/points.geom.hlsl   gs_6_0 points.geom.spv)
 compile_hlsl(${SHADER_SRC_DIR}/points.frag.hlsl   ps_6_0 points.frag.spv)
 
 add_custom_target(Shaders ALL DEPENDS ${SPIRV_OUTPUTS})

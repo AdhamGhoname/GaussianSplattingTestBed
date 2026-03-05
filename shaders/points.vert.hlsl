@@ -20,11 +20,8 @@ struct GaussianData {
 
 struct VSOutput {
     float4 position : SV_Position;
-    float3 worldPos : TEXCOORD3;
     float3 color    : COLOR0;
-    float  opacity  : TEXCOORD0;
-    float3 cov3Da   : TEXCOORD1;  // cov00, cov01, cov02
-    float3 cov3Db   : TEXCOORD2;  // cov11, cov12, cov22
+    [[vk::builtin("PointSize")]] float pointSize : PSIZE;
 };
 
 VSOutput main(uint vertexID : SV_VertexID) {
@@ -37,14 +34,10 @@ VSOutput main(uint vertexID : SV_VertexID) {
         0.5 + SH_C0 * g.shB
     ));
 
-    float3 worldPos = float3(g.cx, g.cy, g.cz);
-
     VSOutput output;
-    output.position  = mul(cam.proj, mul(cam.view, float4(worldPos, 1.0)));
-    output.worldPos  = worldPos;
+    float4 worldPos = float4(g.cx, g.cy, g.cz, 1.0);
+    output.position  = mul(cam.proj, mul(cam.view, worldPos));
     output.color     = rgb;
-    output.opacity   = g.opacity;
-    output.cov3Da    = float3(g.cov0, g.cov1, g.cov2);
-    output.cov3Db    = float3(g.cov3, g.cov4, g.cov5);
+    output.pointSize = 1.0;
     return output;
 }

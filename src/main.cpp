@@ -53,7 +53,7 @@ static void createDescriptorSetLayout(VulkanContext& vk, AppResources& app) {
     uboBinding.binding         = 0;
     uboBinding.descriptorType  = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     uboBinding.descriptorCount = 1;
-    uboBinding.stageFlags      = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_GEOMETRY_BIT;
+    uboBinding.stageFlags      = VK_SHADER_STAGE_VERTEX_BIT;
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType        = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -66,11 +66,9 @@ static void createDescriptorSetLayout(VulkanContext& vk, AppResources& app) {
 
 static void createGraphicsPipeline(VulkanContext& vk, AppResources& app) {
     auto vertCode = VulkanContext::readFile("shaders/points.vert.spv");
-    auto geomCode = VulkanContext::readFile("shaders/points.geom.spv");
     auto fragCode = VulkanContext::readFile("shaders/points.frag.spv");
 
     VkShaderModule vertModule = vk.createShaderModule(vertCode);
-    VkShaderModule geomModule = vk.createShaderModule(geomCode);
     VkShaderModule fragModule = vk.createShaderModule(fragCode);
 
     VkPipelineShaderStageCreateInfo vertStage{};
@@ -85,13 +83,7 @@ static void createGraphicsPipeline(VulkanContext& vk, AppResources& app) {
     fragStage.module = fragModule;
     fragStage.pName  = "main";
 
-    VkPipelineShaderStageCreateInfo geomStage{};
-    geomStage.sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    geomStage.stage  = VK_SHADER_STAGE_GEOMETRY_BIT;
-    geomStage.module = geomModule;
-    geomStage.pName  = "main";
-
-    VkPipelineShaderStageCreateInfo shaderStages[] = { vertStage, geomStage, fragStage };
+    VkPipelineShaderStageCreateInfo shaderStages[] = { vertStage, fragStage };
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -156,7 +148,7 @@ static void createGraphicsPipeline(VulkanContext& vk, AppResources& app) {
 
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineInfo.stageCount          = 3;
+    pipelineInfo.stageCount          = 2;
     pipelineInfo.pStages             = shaderStages;
     pipelineInfo.pVertexInputState   = &vertexInputInfo;
     pipelineInfo.pInputAssemblyState = &inputAssembly;
@@ -174,7 +166,6 @@ static void createGraphicsPipeline(VulkanContext& vk, AppResources& app) {
         throw std::runtime_error("failed to create graphics pipeline");
 
     vkDestroyShaderModule(vk.device(), fragModule, nullptr);
-    vkDestroyShaderModule(vk.device(), geomModule, nullptr);
     vkDestroyShaderModule(vk.device(), vertModule, nullptr);
 }
 
@@ -369,7 +360,7 @@ int main(int argc, char* argv[]) {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Gaussian Splatting", nullptr, nullptr);
 
-        Camera camera(glm::vec3(0.0f, 0.0f, -2.0f), 90.0f, 0.0f);
+        Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
 
         VulkanContext vk;
         vk.init(window);
